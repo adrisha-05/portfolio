@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
+import Image from "next/image"
 import { TiltCard } from "@/components/tilt-card"
 
 const modes = [
@@ -9,51 +10,14 @@ const modes = [
     label: "Tactical View",
     code: "TAC-01",
     description: "Strategic overview of operations, intel briefings, and mission-critical data.",
-    icon: (
-      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 sm:h-24 sm:w-24" aria-hidden="true">
-        <circle cx="40" cy="40" r="32" stroke="currentColor" strokeWidth="0.5" opacity="0.15" />
-        <circle cx="40" cy="40" r="24" stroke="currentColor" strokeWidth="0.5" opacity="0.25" strokeDasharray="2 3" />
-        <circle cx="40" cy="40" r="16" stroke="currentColor" strokeWidth="0.5" opacity="0.35" />
-        <circle cx="40" cy="40" r="8" stroke="currentColor" strokeWidth="0.75" opacity="0.45" />
-        <circle cx="40" cy="40" r="2.5" fill="currentColor" opacity="0.9" />
-        <line x1="40" y1="4" x2="40" y2="16" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-        <line x1="40" y1="64" x2="40" y2="76" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-        <line x1="4" y1="40" x2="16" y2="40" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-        <line x1="64" y1="40" x2="76" y2="40" stroke="currentColor" strokeWidth="1" opacity="0.25" />
-        <line x1="40" y1="40" x2="40" y2="8" stroke="currentColor" strokeWidth="1.5" opacity="0.5">
-          <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="6s" repeatCount="indefinite" />
-        </line>
-        <circle cx="52" cy="28" r="2.5" fill="currentColor" opacity="0.6">
-          <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="30" cy="50" r="2" fill="currentColor" opacity="0.4">
-          <animate attributeName="opacity" values="0.4;0.1;0.4" dur="3s" repeatCount="indefinite" />
-        </circle>
-        <circle cx="55" cy="48" r="1.5" fill="currentColor" opacity="0.3">
-          <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2.5s" repeatCount="indefinite" />
-        </circle>
-      </svg>
-    ),
+    image: "/images/tactical-view.png",
   },
   {
     id: "combat",
     label: "Combat Simulation",
     code: "CMB-02",
     description: "Live-fire testing environment for skills, frameworks, and project deployments.",
-    icon: (
-      <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-20 w-20 sm:h-24 sm:w-24" aria-hidden="true">
-        <path d="M40 6 L70 20 L70 50 C70 64 56 74 40 80 C24 74 10 64 10 50 L10 20 Z" stroke="currentColor" strokeWidth="0.5" opacity="0.15" fill="none" />
-        <path d="M40 14 L62 26 L62 48 C62 58 52 66 40 70 C28 66 18 58 18 48 L18 26 Z" stroke="currentColor" strokeWidth="0.75" opacity="0.3" fill="none" />
-        <path d="M40 22 L54 32 L54 46 C54 52 48 58 40 60 C32 58 26 52 26 46 L26 32 Z" stroke="currentColor" strokeWidth="0.5" opacity="0.2" fill="currentColor" fillOpacity="0.03" />
-        <line x1="40" y1="28" x2="40" y2="58" stroke="currentColor" strokeWidth="0.75" opacity="0.2" />
-        <line x1="26" y1="43" x2="54" y2="43" stroke="currentColor" strokeWidth="0.75" opacity="0.2" />
-        <path d="M40 34 L48 43 L40 52 L32 43 Z" stroke="currentColor" strokeWidth="1" opacity="0.6" fill="currentColor" fillOpacity="0.08" />
-        <circle cx="40" cy="43" r="3" fill="currentColor" opacity="0.8">
-          <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" />
-          <animate attributeName="opacity" values="0.8;0.5;0.8" dur="2s" repeatCount="indefinite" />
-        </circle>
-      </svg>
-    ),
+    image: "/images/combat-simulation.png",
   },
 ] as const
 
@@ -252,7 +216,7 @@ export function ModeSelect({ selectedRole, onBack }: ModeSelectProps) {
               <TiltCard key={mode.id} glowColor="var(--danger)">
                 <button
                   onClick={() => setSelectedMode(isSelected ? null : mode.id)}
-                  className={`group relative flex w-full cursor-pointer flex-col items-center gap-7 overflow-hidden rounded-lg border px-8 py-14 text-center backdrop-blur-sm transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:min-h-[380px] sm:py-16 ${
+                  className={`group relative flex w-full cursor-pointer flex-col items-center gap-5 overflow-hidden rounded-lg border text-center backdrop-blur-sm transition-all duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-danger/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
                     isSelected
                       ? "border-danger/60 bg-danger/[0.06] shadow-[0_0_80px_-10px] shadow-danger-glow/30"
                       : "border-border/40 bg-card/40 hover:border-danger/40 hover:bg-card/60 hover:shadow-[0_0_60px_-15px] hover:shadow-danger-glow/20"
@@ -267,7 +231,7 @@ export function ModeSelect({ selectedRole, onBack }: ModeSelectProps) {
                       isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-50"
                     }`}
                     style={{
-                      background: "radial-gradient(ellipse at 50% 40%, rgba(150, 30, 30, 0.08) 0%, transparent 70%)",
+                      background: "radial-gradient(ellipse at 50% 30%, rgba(150, 30, 30, 0.10) 0%, transparent 70%)",
                     }}
                   />
 
@@ -277,50 +241,97 @@ export function ModeSelect({ selectedRole, onBack }: ModeSelectProps) {
                   <span className={`absolute -bottom-px -left-px h-6 w-6 border-b border-l transition-colors duration-500 ${isSelected ? "border-danger/80" : "border-border/40 group-hover:border-danger/50"}`} />
                   <span className={`absolute -bottom-px -right-px h-6 w-6 border-b border-r transition-colors duration-500 ${isSelected ? "border-danger/80" : "border-border/40 group-hover:border-danger/50"}`} />
 
-                  {/* Mode code */}
-                  <span
-                    className={`relative z-10 font-mono text-[10px] uppercase tracking-[0.35em] transition-colors duration-500 ${
-                      isSelected ? "text-danger/60" : "text-muted-foreground/30 group-hover:text-danger/40"
-                    }`}
-                  >
-                    {mode.code}
-                  </span>
+                  {/* Image preview container -- 5:4 aspect ratio */}
+                  <div className="relative w-full overflow-hidden">
+                    {/* Red glow around image container */}
+                    <div
+                      aria-hidden="true"
+                      className={`pointer-events-none absolute -inset-2 z-0 transition-opacity duration-700 ${
+                        isSelected ? "opacity-100" : "opacity-0 group-hover:opacity-60"
+                      }`}
+                      style={{
+                        background: "radial-gradient(ellipse 90% 80% at 50% 50%, rgba(140, 25, 25, 0.18) 0%, transparent 65%)",
+                        filter: "blur(20px)",
+                      }}
+                    />
 
-                  {/* Icon */}
-                  <div
-                    className={`relative z-10 transition-all duration-500 ${
-                      isSelected ? "text-danger" : "text-muted-foreground/30 group-hover:text-danger/60"
-                    }`}
-                  >
-                    {mode.icon}
+                    <div className="relative aspect-[5/4] w-full overflow-hidden">
+                      {/* Image with hover zoom */}
+                      <Image
+                        src={mode.image}
+                        alt={`${mode.label} preview`}
+                        fill
+                        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.08]"
+                        style={{
+                          transform: isSelected ? "scale(1.1)" : undefined,
+                        }}
+                        sizes="(max-width: 640px) 100vw, 50vw"
+                        priority
+                      />
+
+                      {/* Dark overlay for readability */}
+                      <div
+                        aria-hidden="true"
+                        className={`absolute inset-0 transition-all duration-500 ${
+                          isSelected
+                            ? "bg-black/40"
+                            : "bg-black/55 group-hover:bg-black/40"
+                        }`}
+                      />
+
+                      {/* Bottom gradient fade into card body */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-0 h-1/3"
+                        style={{
+                          background: isSelected
+                            ? "linear-gradient(to top, rgba(10,6,6,0.95) 0%, rgba(10,6,6,0.4) 60%, transparent 100%)"
+                            : "linear-gradient(to top, rgba(8,8,8,0.95) 0%, rgba(8,8,8,0.4) 60%, transparent 100%)",
+                        }}
+                      />
+
+                      {/* Mode code on top of image */}
+                      <div className="absolute left-0 right-0 top-0 flex justify-center pt-4">
+                        <span
+                          className={`relative z-10 font-mono text-[10px] uppercase tracking-[0.35em] transition-colors duration-500 ${
+                            isSelected ? "text-danger/70" : "text-muted-foreground/40 group-hover:text-danger/50"
+                          }`}
+                        >
+                          {mode.code}
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Label */}
-                  <span
-                    className={`relative z-10 font-mono text-lg font-bold uppercase tracking-[0.2em] transition-colors duration-500 sm:text-xl ${
-                      isSelected ? "text-danger" : "text-foreground/70 group-hover:text-foreground/90"
-                    }`}
-                  >
-                    {mode.label}
-                  </span>
+                  {/* Card body: title, description, indicator */}
+                  <div className="flex flex-col items-center gap-4 px-6 pb-8 pt-1">
+                    {/* Label */}
+                    <span
+                      className={`relative z-10 font-mono text-lg font-bold uppercase tracking-[0.2em] transition-colors duration-500 sm:text-xl ${
+                        isSelected ? "text-danger" : "text-foreground/70 group-hover:text-foreground/90"
+                      }`}
+                    >
+                      {mode.label}
+                    </span>
 
-                  {/* Description */}
-                  <span
-                    className={`relative z-10 max-w-[260px] font-mono text-[11px] uppercase leading-relaxed tracking-[0.1em] transition-colors duration-500 ${
-                      isSelected ? "text-danger/40" : "text-muted-foreground/30 group-hover:text-muted-foreground/60"
-                    }`}
-                  >
-                    {mode.description}
-                  </span>
+                    {/* Description */}
+                    <span
+                      className={`relative z-10 max-w-[260px] font-mono text-[11px] uppercase leading-relaxed tracking-[0.1em] transition-colors duration-500 ${
+                        isSelected ? "text-danger/40" : "text-muted-foreground/30 group-hover:text-muted-foreground/60"
+                      }`}
+                    >
+                      {mode.description}
+                    </span>
 
-                  {/* Selection indicator line */}
-                  <div
-                    className={`relative z-10 mt-2 h-px w-16 transition-all duration-500 ${
-                      isSelected
-                        ? "scale-x-100 bg-danger"
-                        : "scale-x-50 bg-border/40 group-hover:scale-x-75 group-hover:bg-danger/40"
-                    }`}
-                  />
+                    {/* Selection indicator line */}
+                    <div
+                      className={`relative z-10 mt-1 h-px w-16 transition-all duration-500 ${
+                        isSelected
+                          ? "scale-x-100 bg-danger"
+                          : "scale-x-50 bg-border/40 group-hover:scale-x-75 group-hover:bg-danger/40"
+                      }`}
+                    />
+                  </div>
                 </button>
               </TiltCard>
             )
