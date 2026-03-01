@@ -41,6 +41,7 @@ const roles = [
     description: "Learning the craft",
     Icon: StudentIcon,
     code: "STU-04",
+    portrait: "/images/student-portrait.png",
   },
 ] as const
 
