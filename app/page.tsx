@@ -1,11 +1,11 @@
-import { HeroContent } from "@/components/hero-content"
+import { CharacterSelect } from "@/components/character-select"
 import { StatusBar } from "@/components/status-bar"
 import { Scanlines } from "@/components/scanlines"
 import { GridBackground } from "@/components/grid-background"
 
 export default function Home() {
   return (
-    <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background px-6">
+    <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background px-4 py-20 sm:px-6">
       {/* Background layers */}
       <GridBackground />
       <Scanlines />
@@ -20,9 +20,9 @@ export default function Home() {
         }}
       />
 
-      {/* Hero */}
-      <div className="relative z-20">
-        <HeroContent />
+      {/* Character selection */}
+      <div className="relative z-20 w-full">
+        <CharacterSelect />
       </div>
 
       {/* Status bar */}
