@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { CharacterSelect } from "@/components/character-select"
 import { ModeSelect } from "@/components/mode-select"
 import { CinematicLoader } from "@/components/cinematic-loader"
+import { TacticalView } from "@/components/tactical-view"
 import { StatusBar } from "@/components/status-bar"
 import { Scanlines } from "@/components/scanlines"
 import { GridBackground } from "@/components/grid-background"
@@ -11,7 +12,7 @@ import { SoundToggle } from "@/components/sound-toggle"
 import { SoundProvider } from "@/hooks/use-sound"
 
 export default function Home() {
-  const [screen, setScreen] = useState<"character" | "mode" | "loading">("character")
+  const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical">("character")
   const [selectedRole, setSelectedRole] = useState<string>("")
   const [selectedModeLabel, setSelectedModeLabel] = useState<string>("")
   const [selectedModeId, setSelectedModeId] = useState<string>("")
@@ -46,9 +47,20 @@ export default function Home() {
   }, [])
 
   const handleLoadingComplete = useCallback(() => {
-    // After loading, navigate to the next page.
-    // For now this returns to mode select -- replace with your real
-    // destination route once the pages exist (e.g. router.push).
+    // Route to the correct destination based on selected mode
+    setTransitioning(true)
+    setTimeout(() => {
+      if (selectedModeId === "tactical") {
+        setScreen("tactical")
+      } else {
+        // Fallback: return to mode select for unbuilt modes
+        setScreen("mode")
+      }
+      setTransitioning(false)
+    }, 600)
+  }, [selectedModeId])
+
+  const handleTacticalBack = useCallback(() => {
     setTransitioning(true)
     setTimeout(() => {
       setScreen("mode")
@@ -99,6 +111,20 @@ export default function Home() {
             modeLabel={selectedModeLabel}
             onComplete={handleLoadingComplete}
           />
+        )}
+
+        {/* Tactical View (full-screen, renders above the shared background) */}
+        {screen === "tactical" && (
+          <div
+            className={`fixed inset-0 z-40 transition-opacity duration-700 ease-in-out ${
+              transitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <TacticalView
+              selectedRole={selectedRole}
+              onBack={handleTacticalBack}
+            />
+          </div>
         )}
 
         {/* Status bar */}
