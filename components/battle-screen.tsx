@@ -155,60 +155,50 @@ function GunTipEnergyCross() {
   )
 }
 
-// ===================== AVATAR TARGET CROSS (Blue Neon) =====================
+// ===================== AVATAR TARGET CROSS (Blue Neon — compact) =====================
 function AvatarTargetCross() {
   return (
     <div
-      className="pointer-events-none absolute z-[3]"
+      className="pointer-events-none absolute z-[2]"
       style={{
         top: "42%",
         left: "50%",
+        width: 28,
+        height: 28,
         transform: "translate(-50%, -50%)",
       }}
     >
-      {/* Outer bloom */}
+      {/* Center glow dot */}
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
         style={{
-          width: 40,
-          height: 40,
+          width: 6,
+          height: 6,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(0,207,255,0.15) 0%, transparent 70%)",
-          filter: "blur(4px)",
-          animation: "bloom-pulse 2s ease-in-out infinite",
-        }}
-      />
-      {/* Center glow point */}
-      <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{
-          width: 8,
-          height: 8,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(100,200,255,1) 0%, rgba(0,207,255,0.6) 50%, transparent 100%)",
-          boxShadow: "0 0 12px rgba(0,207,255,0.9), 0 0 24px rgba(0,207,255,0.5)",
+          background: "radial-gradient(circle, rgba(100,200,255,1) 0%, rgba(0,207,255,0.5) 60%, transparent 100%)",
+          boxShadow: "0 0 7px rgba(0,207,255,0.54), 0 0 14px rgba(0,207,255,0.3)",
           animation: "energy-pulse 1.5s ease-in-out infinite",
         }}
       />
-      {/* Crosshair flare - horizontal */}
+      {/* Crosshair — horizontal */}
       <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-0 top-1/2 -translate-y-1/2"
         style={{
-          width: 24,
+          width: "100%",
           height: 2,
-          background: "linear-gradient(90deg, transparent 0%, rgba(0,207,255,0.8) 30%, rgba(100,200,255,1) 50%, rgba(0,207,255,0.8) 70%, transparent 100%)",
-          boxShadow: "0 0 8px rgba(0,207,255,0.6)",
+          background: "linear-gradient(90deg, transparent 0%, rgba(0,207,255,0.48) 30%, rgba(100,200,255,0.6) 50%, rgba(0,207,255,0.48) 70%, transparent 100%)",
+          boxShadow: "0 0 5px rgba(0,207,255,0.36)",
           animation: "cross-flicker 2s ease-in-out infinite",
         }}
       />
-      {/* Crosshair flare - vertical */}
+      {/* Crosshair — vertical */}
       <div
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        className="absolute left-1/2 top-0 -translate-x-1/2"
         style={{
           width: 2,
-          height: 24,
-          background: "linear-gradient(180deg, transparent 0%, rgba(0,207,255,0.8) 30%, rgba(100,200,255,1) 50%, rgba(0,207,255,0.8) 70%, transparent 100%)",
-          boxShadow: "0 0 8px rgba(0,207,255,0.6)",
+          height: "100%",
+          background: "linear-gradient(180deg, transparent 0%, rgba(0,207,255,0.48) 30%, rgba(100,200,255,0.6) 50%, rgba(0,207,255,0.48) 70%, transparent 100%)",
+          boxShadow: "0 0 5px rgba(0,207,255,0.36)",
           animation: "cross-flicker 2s ease-in-out infinite",
           animationDelay: "0.5s",
         }}
@@ -311,7 +301,7 @@ export function BattleScreen() {
         >
           {/* Label anchored just above head */}
           <div
-            className="absolute z-[20] whitespace-nowrap text-center"
+            className="absolute z-[3] whitespace-nowrap text-center"
             style={{
               bottom: "100%",
               left: "50%",
@@ -320,12 +310,14 @@ export function BattleScreen() {
             }}
           >
             <span
-              className="font-mono font-bold uppercase"
+              className="font-mono uppercase"
               style={{
-                fontSize: "clamp(16px, 1.2vw, 22px)",
-                letterSpacing: "3px",
+                fontSize: "18px",
+                letterSpacing: "2px",
+                fontWeight: 600,
                 color: "#00CFFF",
-                textShadow: "0 0 8px rgba(0,207,255,0.6), 0 0 16px rgba(0,207,255,0.3)",
+                whiteSpace: "nowrap",
+                textShadow: "0 0 5.6px rgba(0,207,255,0.42), 0 0 11.2px rgba(0,207,255,0.21)",
               }}
             >
               {AVATAR_LABELS[index].label}
@@ -344,7 +336,7 @@ export function BattleScreen() {
             alt={`Target ${avatar.id}`}
             width={400}
             height={600}
-            className="relative z-[2] h-full w-auto object-contain"
+            className="relative z-[1] h-full w-auto object-contain"
             unoptimized
           />
         </div>
