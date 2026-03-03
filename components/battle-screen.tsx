@@ -12,13 +12,13 @@ const AVATAR_TARGETS = [
   { id: 5, src: "/images/avatar5.png", left: "90%", bottom: "8%", scale: 2.4, height: "clamp(190px, 30vh, 340px)", z: 4 },
 ]
 
-// ===================== TOP-ALIGNED HUD LABELS =====================
-const HUD_LABELS = [
-  { id: 1, label: "SQUADS & ALLIANCES", left: "12%" },
-  { id: 2, label: "MISSIONS", left: "30%" },
-  { id: 3, label: "PROFILE", left: "50%" },
-  { id: 4, label: "CORE ABILITIES", left: "72%" },
-  { id: 5, label: "CONTACT", left: "90%" },
+// ===================== AVATAR-ANCHORED HUD LABELS =====================
+const AVATAR_LABELS = [
+  { id: 1, label: "SQUADS & ALLIANCES" },
+  { id: 2, label: "MISSIONS" },
+  { id: 3, label: "PROFILE" },
+  { id: 4, label: "CORE ABILITIES" },
+  { id: 5, label: "CONTACT" },
 ]
 
 // ===================== TONED DOWN RED AURA ENGINE (15% reduced) =====================
@@ -155,6 +155,68 @@ function GunTipEnergyCross() {
   )
 }
 
+// ===================== AVATAR TARGET CROSS (Blue Neon) =====================
+function AvatarTargetCross() {
+  return (
+    <div
+      className="pointer-events-none absolute z-[3]"
+      style={{
+        top: "42%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+      }}
+    >
+      {/* Outer bloom */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: 40,
+          height: 40,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(0,207,255,0.15) 0%, transparent 70%)",
+          filter: "blur(4px)",
+          animation: "bloom-pulse 2s ease-in-out infinite",
+        }}
+      />
+      {/* Center glow point */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(100,200,255,1) 0%, rgba(0,207,255,0.6) 50%, transparent 100%)",
+          boxShadow: "0 0 12px rgba(0,207,255,0.9), 0 0 24px rgba(0,207,255,0.5)",
+          animation: "energy-pulse 1.5s ease-in-out infinite",
+        }}
+      />
+      {/* Crosshair flare - horizontal */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: 24,
+          height: 2,
+          background: "linear-gradient(90deg, transparent 0%, rgba(0,207,255,0.8) 30%, rgba(100,200,255,1) 50%, rgba(0,207,255,0.8) 70%, transparent 100%)",
+          boxShadow: "0 0 8px rgba(0,207,255,0.6)",
+          animation: "cross-flicker 2s ease-in-out infinite",
+        }}
+      />
+      {/* Crosshair flare - vertical */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+        style={{
+          width: 2,
+          height: 24,
+          background: "linear-gradient(180deg, transparent 0%, rgba(0,207,255,0.8) 30%, rgba(100,200,255,1) 50%, rgba(0,207,255,0.8) 70%, transparent 100%)",
+          boxShadow: "0 0 8px rgba(0,207,255,0.6)",
+          animation: "cross-flicker 2s ease-in-out infinite",
+          animationDelay: "0.5s",
+        }}
+      />
+    </div>
+  )
+}
+
 // ===================== MAIN COMPONENT =====================
 export function BattleScreen() {
   const [mounted, setMounted] = useState(false)
@@ -232,33 +294,8 @@ export function BattleScreen() {
         }}
       />
 
-      {/* ============= CLEAN TOP-ALIGNED HUD LABELS ============= */}
-      {HUD_LABELS.map((item) => (
-        <div
-          key={item.id}
-          className="pointer-events-none absolute z-[20] whitespace-nowrap text-center"
-          style={{
-            top: "8%",
-            left: item.left,
-            transform: "translateX(-50%)",
-          }}
-        >
-          <span
-            className="font-mono font-bold uppercase"
-            style={{
-              fontSize: "clamp(16px, 1.2vw, 22px)",
-              letterSpacing: "3px",
-              color: "#00CFFF",
-              textShadow: "0 0 8px rgba(0,207,255,0.6), 0 0 16px rgba(0,207,255,0.3)",
-            }}
-          >
-            {item.label}
-          </span>
-        </div>
-      ))}
-
-      {/* ============= AVATAR TARGETS WITH AURA ONLY ============= */}
-      {AVATAR_TARGETS.map((avatar) => (
+      {/* ============= AVATAR TARGETS WITH AURA, CROSS & ANCHORED LABELS ============= */}
+      {AVATAR_TARGETS.map((avatar, index) => (
         <div
           key={avatar.id}
           className="pointer-events-none absolute"
@@ -269,10 +306,37 @@ export function BattleScreen() {
             height: avatar.height,
             width: "auto",
             zIndex: avatar.z,
+            position: "absolute",
           }}
         >
+          {/* Label anchored just above head */}
+          <div
+            className="absolute z-[20] whitespace-nowrap text-center"
+            style={{
+              bottom: "100%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              marginBottom: "10px",
+            }}
+          >
+            <span
+              className="font-mono font-bold uppercase"
+              style={{
+                fontSize: "clamp(16px, 1.2vw, 22px)",
+                letterSpacing: "3px",
+                color: "#00CFFF",
+                textShadow: "0 0 8px rgba(0,207,255,0.6), 0 0 16px rgba(0,207,255,0.3)",
+              }}
+            >
+              {AVATAR_LABELS[index].label}
+            </span>
+          </div>
+
           {/* Toned down Red Aura Engine */}
           <RedAuraEngine />
+
+          {/* Blue Target Cross */}
+          <AvatarTargetCross />
           
           {/* Avatar Image */}
           <Image
