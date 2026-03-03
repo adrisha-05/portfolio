@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useCallback, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { CharacterSelect } from "@/components/character-select"
 import { ModeSelect } from "@/components/mode-select"
 import { CinematicLoader } from "@/components/cinematic-loader"
@@ -18,11 +18,25 @@ import { SoundProvider } from "@/hooks/use-sound"
 
 export default function Home() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical" | "profile" | "abilities" | "missions" | "alliances">("character")
   const [selectedRole, setSelectedRole] = useState<string>("")
   const [selectedModeLabel, setSelectedModeLabel] = useState<string>("")
   const [selectedModeId, setSelectedModeId] = useState<string>("")
   const [transitioning, setTransitioning] = useState(false)
+
+  // Handle ?screen= query param for explicit route navigation
+  useEffect(() => {
+    const screenParam = searchParams.get("screen")
+    if (screenParam === "alliances") {
+      setScreen("alliances")
+      // Clear the URL param without triggering a navigation
+      window.history.replaceState({}, "", "/")
+    } else if (screenParam === "missions") {
+      setScreen("missions")
+      window.history.replaceState({}, "", "/")
+    }
+  }, [searchParams])
 
   const handleRoleConfirmed = useCallback((role: string) => {
     setTransitioning(true)

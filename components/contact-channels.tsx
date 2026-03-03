@@ -322,7 +322,8 @@ export function ContactChannels() {
     if (isNavigating.current) return
     isNavigating.current = true
     playClick()
-    router.push("/")
+    // Navigate explicitly to Squads & Alliances - never use router.back()
+    router.push("/?screen=alliances")
   }, [playClick, router])
 
   return (
