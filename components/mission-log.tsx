@@ -386,11 +386,12 @@ export function MissionLog({ onPrev, onNext, onBack }: MissionLogProps) {
           </div>
         </div>
 
-        {/* ---- RIGHT: CHARACTER WITH AURA ---- */}
+        {/* ---- RIGHT: CHARACTER WITH AURA (transparent - PNG preserves alpha) ---- */}
         <div
           className={`relative flex flex-1 items-center justify-center transition-all duration-[1200ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] ${
             mounted ? "translate-x-0 scale-100 opacity-100" : "translate-x-12 scale-[0.92] opacity-0"
           }`}
+          style={{ background: "transparent" }}
         >
           <MissionAuraEngine />
 
@@ -399,6 +400,7 @@ export function MissionLog({ onPrev, onNext, onBack }: MissionLogProps) {
             style={{
               width: "clamp(340px, 42vw, 580px)",
               height: "78vh",
+              background: "transparent",
             }}
           >
             <Image
@@ -406,7 +408,10 @@ export function MissionLog({ onPrev, onNext, onBack }: MissionLogProps) {
               alt="Operator side profile -- Mission Log view"
               fill
               className="object-contain drop-shadow-[0_0_90px_rgba(180,40,35,0.4)]"
-              style={{ objectPosition: "center center" }}
+              style={{ 
+                objectPosition: "center center",
+                background: "transparent",
+              }}
               priority
             />
             {/* Floor glow */}
