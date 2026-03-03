@@ -5,6 +5,7 @@ import { CharacterSelect } from "@/components/character-select"
 import { ModeSelect } from "@/components/mode-select"
 import { CinematicLoader } from "@/components/cinematic-loader"
 import { TacticalView } from "@/components/tactical-view"
+import { AgentProfile } from "@/components/agent-profile"
 import { StatusBar } from "@/components/status-bar"
 import { Scanlines } from "@/components/scanlines"
 import { GridBackground } from "@/components/grid-background"
@@ -12,7 +13,7 @@ import { SoundToggle } from "@/components/sound-toggle"
 import { SoundProvider } from "@/hooks/use-sound"
 
 export default function Home() {
-  const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical">("character")
+  const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical" | "profile">("character")
   const [selectedRole, setSelectedRole] = useState<string>("")
   const [selectedModeLabel, setSelectedModeLabel] = useState<string>("")
   const [selectedModeId, setSelectedModeId] = useState<string>("")
@@ -68,6 +69,25 @@ export default function Home() {
     }, 600)
   }, [])
 
+  const handleModuleOpen = useCallback((moduleId: string) => {
+    setTransitioning(true)
+    setTimeout(() => {
+      if (moduleId === "profile") {
+        setScreen("profile")
+      }
+      // Future modules can be added here
+      setTransitioning(false)
+    }, 600)
+  }, [])
+
+  const handleProfileBack = useCallback(() => {
+    setTransitioning(true)
+    setTimeout(() => {
+      setScreen("tactical")
+      setTransitioning(false)
+    }, 600)
+  }, [])
+
   return (
     <SoundProvider>
       <main className="relative flex min-h-svh flex-col items-center justify-center overflow-hidden bg-background px-4 py-20 sm:px-6">
@@ -76,7 +96,7 @@ export default function Home() {
         <Scanlines />
 
         {/* Sound toggle (hidden in tactical view since it has its own) */}
-        {screen !== "tactical" && <SoundToggle />}
+        {screen !== "tactical" && screen !== "profile" && <SoundToggle />}
 
         {/* Radial vignette */}
         <div
@@ -123,6 +143,20 @@ export default function Home() {
             <TacticalView
               selectedRole={selectedRole}
               onBack={handleTacticalBack}
+              onModuleOpen={handleModuleOpen}
+            />
+          </div>
+        )}
+
+        {/* Agent Profile (full-screen, isolated) */}
+        {screen === "profile" && (
+          <div
+            className={`fixed inset-0 z-50 transition-opacity duration-700 ease-in-out ${
+              transitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <AgentProfile
+              onBack={handleProfileBack}
             />
           </div>
         )}
