@@ -34,7 +34,6 @@ export function BattleScreen() {
           className="object-cover"
           style={{ objectPosition: "center" }}
           priority
-          quality={100}
         />
       </div>
 
