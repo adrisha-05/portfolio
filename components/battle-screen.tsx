@@ -186,12 +186,12 @@ export function BattleScreen() {
             <span
               className="font-mono uppercase"
               style={{
-                fontSize: "22px",
+                fontSize: "14px",
                 letterSpacing: "2px",
-                fontWeight: 600,
+                fontWeight: 500,
                 color: "#00CFFF",
                 whiteSpace: "nowrap",
-                textShadow: "0 0 6px rgba(0,200,255,0.6)",
+                textShadow: "0 0 4px rgba(0,200,255,0.5)",
               }}
             >
               {AVATAR_LABELS[index].label}
