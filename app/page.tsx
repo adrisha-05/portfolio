@@ -8,6 +8,7 @@ import { TacticalView } from "@/components/tactical-view"
 import { AgentProfile } from "@/components/agent-profile"
 import { CoreAbilities } from "@/components/core-abilities"
 import { MissionLog } from "@/components/mission-log"
+import { SquadsAlliances } from "@/components/squads-alliances"
 import { StatusBar } from "@/components/status-bar"
 import { Scanlines } from "@/components/scanlines"
 import { GridBackground } from "@/components/grid-background"
@@ -15,7 +16,7 @@ import { SoundToggle } from "@/components/sound-toggle"
 import { SoundProvider } from "@/hooks/use-sound"
 
 export default function Home() {
-  const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical" | "profile" | "abilities" | "missions">("character")
+  const [screen, setScreen] = useState<"character" | "mode" | "loading" | "tactical" | "profile" | "abilities" | "missions" | "alliances">("character")
   const [selectedRole, setSelectedRole] = useState<string>("")
   const [selectedModeLabel, setSelectedModeLabel] = useState<string>("")
   const [selectedModeId, setSelectedModeId] = useState<string>("")
@@ -80,6 +81,8 @@ export default function Home() {
         setScreen("abilities")
       } else if (moduleId === "missions") {
         setScreen("missions")
+      } else if (moduleId === "alliances") {
+        setScreen("alliances")
       }
       setTransitioning(false)
     }, 600)
@@ -133,7 +136,31 @@ export default function Home() {
     }, 600)
   }, [])
 
+  const handleMissionsNext = useCallback(() => {
+    setTransitioning(true)
+    setTimeout(() => {
+      setScreen("alliances")
+      setTransitioning(false)
+    }, 600)
+  }, [])
+
   const handleMissionsBack = useCallback(() => {
+    setTransitioning(true)
+    setTimeout(() => {
+      setScreen("tactical")
+      setTransitioning(false)
+    }, 600)
+  }, [])
+
+  const handleAlliancesPrev = useCallback(() => {
+    setTransitioning(true)
+    setTimeout(() => {
+      setScreen("missions")
+      setTransitioning(false)
+    }, 600)
+  }, [])
+
+  const handleAlliancesBack = useCallback(() => {
     setTransitioning(true)
     setTimeout(() => {
       setScreen("tactical")
@@ -149,7 +176,7 @@ export default function Home() {
         <Scanlines />
 
         {/* Sound toggle (hidden in tactical view since it has its own) */}
-        {screen !== "tactical" && screen !== "profile" && screen !== "abilities" && screen !== "missions" && <SoundToggle />}
+        {screen !== "tactical" && screen !== "profile" && screen !== "abilities" && screen !== "missions" && screen !== "alliances" && <SoundToggle />}
 
         {/* Radial vignette */}
         <div
@@ -239,7 +266,22 @@ export default function Home() {
           >
             <MissionLog
               onPrev={handleMissionsPrev}
+              onNext={handleMissionsNext}
               onBack={handleMissionsBack}
+            />
+          </div>
+        )}
+
+        {/* Squads & Alliances (full-screen, isolated) */}
+        {screen === "alliances" && (
+          <div
+            className={`fixed inset-0 z-50 transition-opacity duration-700 ease-in-out ${
+              transitioning ? "opacity-0" : "opacity-100"
+            }`}
+          >
+            <SquadsAlliances
+              onPrev={handleAlliancesPrev}
+              onBack={handleAlliancesBack}
             />
           </div>
         )}
