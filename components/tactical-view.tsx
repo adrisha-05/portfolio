@@ -274,7 +274,6 @@ export function TacticalView({ selectedRole, onBack, onModuleOpen }: TacticalVie
   const [hoveredIcon, setHoveredIcon] = useState<string | null>(null)
   const { playClick } = useSound()
   const cursorGlowRef = useCursorGlow()
-  const isNavigating = useRef(false)
 
   useEffect(() => {
     const timer = setTimeout(() => setMounted(true), 80)
@@ -283,11 +282,6 @@ export function TacticalView({ selectedRole, onBack, onModuleOpen }: TacticalVie
 
   const handleIconClick = useCallback(
     (moduleId: string) => {
-      // Prevent double-click
-      if (isNavigating.current) return
-      isNavigating.current = true
-      setTimeout(() => { isNavigating.current = false }, 600)
-      
       playClick()
       onModuleOpen?.(moduleId)
     },
