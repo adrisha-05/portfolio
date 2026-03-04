@@ -8,11 +8,11 @@ import { useSound } from "@/hooks/use-sound"
 
 // ===================== AVATAR TARGET DATA =====================
 const AVATAR_TARGETS = [
-  { id: 1, src: "/images/avatar1.png", left: "10%", bottom: "8%", scale: 2.4, height: "clamp(180px, 28vh, 320px)", z: 5 },
-  { id: 2, src: "/images/avatar2.png", left: "28%", bottom: "5%", scale: 2.8, height: "clamp(200px, 32vh, 360px)", z: 4 },
-  { id: 3, src: "/images/avatar3.png", left: "50%", bottom: "10%", scale: 3.0, height: "clamp(220px, 35vh, 400px)", z: 3 },
+  { id: 1, src: "/images/avatar1.png", left: "10%", bottom: "8%", scale: 2.4, height: "clamp(180px, 28vh, 320px)", z: 4 },
+  { id: 2, src: "/images/avatar2.png", left: "28%", bottom: "5%", scale: 2.8, height: "clamp(200px, 32vh, 360px)", z: 5 },
+  { id: 3, src: "/images/avatar3.png", left: "50%", bottom: "10%", scale: 3.0, height: "clamp(220px, 35vh, 400px)", z: 6 },
   { id: 4, src: "/images/avatar4.png", left: "72%", bottom: "12%", scale: 2.5, height: "clamp(190px, 30vh, 340px)", z: 4 },
-  { id: 5, src: "/images/avatar5.png", left: "90%", bottom: "8%", scale: 2.4, height: "clamp(190px, 30vh, 340px)", z: 5 },
+  { id: 5, src: "/images/avatar5.png", left: "90%", bottom: "8%", scale: 2.4, height: "clamp(190px, 30vh, 340px)", z: 4 },
 ]
 
 // ===================== AVATAR-ANCHORED HUD LABELS =====================
@@ -334,8 +334,8 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
   const [fadeOut, setFadeOut] = useState(false)
   const [interactionLocked, setInteractionLocked] = useState(false)
 
-  // Refs — store the actual <img> DOM node for each avatar
-  const avatarRefs = useRef<(HTMLElement | null)[]>([])
+  // Refs
+  const avatarRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const laserAudioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -362,26 +362,20 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
     if (interactionLocked) return
     setInteractionLocked(true)
 
-    // Always recompute from the clicked avatar's actual <img> element
-    const avatarImgEl = avatarRefs.current[index]
-    if (!avatarImgEl) {
-      console.log("[v0] No ref for avatar", index)
-      setInteractionLocked(false)
-      return
-    }
+    const avatarEl = avatarRefs.current[index]
+    const container = containerRef.current
+    if (!avatarEl || !container) return
 
-    // Get fresh bounding rect directly from the <img> element
-    const imgRect = avatarImgEl.getBoundingClientRect()
+    const avatarRect = avatarEl.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
 
-    // Gun muzzle position (bottom center of viewport)
-    const gunX = window.innerWidth / 2
-    const gunY = window.innerHeight - 60
+    // Gun position (bottom center of screen)
+    const gunX = containerRect.width / 2
+    const gunY = containerRect.height - 60
 
-    // Target: horizontal center + chest-level (45% down from top)
-    const targetX = imgRect.left + imgRect.width / 2
-    const targetY = imgRect.top + imgRect.height * 0.45
-
-    console.log("[v0] LASER TARGET", AVATAR_LABELS[index].label, { targetX, targetY, gunX, gunY, imgRect: { left: imgRect.left, top: imgRect.top, width: imgRect.width, height: imgRect.height } })
+    // Target center (avatar center-mass)
+    const targetX = avatarRect.left - containerRect.left + avatarRect.width / 2
+    const targetY = avatarRect.top - containerRect.top + avatarRect.height * 0.4
 
     // Play laser sound
     if (soundEnabled && laserAudioRef.current) {
@@ -425,13 +419,6 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
           // 6. Navigate after fade (400ms)
           setTimeout(() => {
-            // Reset all laser/hit state
-            setLaserStart({ x: 0, y: 0 })
-            setLaserEnd({ x: 0, y: 0 })
-            setDissolveIndex(null)
-            setFadeOut(false)
-            setInteractionLocked(false)
-
             if (onNavigate) {
               onNavigate(AVATAR_LABELS[index].page)
             }
@@ -565,11 +552,11 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
       </div>
 
       {/* ============= AVATAR TARGETS WITH AURA & ANCHORED LABELS ============= */}
-      {/* Pointer-events disabled on outer layer; only the image itself is clickable */}
       {AVATAR_TARGETS.map((avatar, index) => (
         <div
+          ref={(el) => { avatarRefs.current[index] = el }}
           key={avatar.id}
-          className="pointer-events-none absolute inline-block"
+          className={`absolute inline-block ${interactionLocked ? "pointer-events-none" : "cursor-crosshair"}`}
           style={{
             left: avatar.left,
             bottom: avatar.bottom,
@@ -582,6 +569,7 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
               ? { animation: "dissolve-out 0.8s ease-out forwards" }
               : {}),
           }}
+          onClick={() => handleAvatarClick(index)}
         >
           {/* HUD label anchored above head */}
           <div
@@ -599,18 +587,14 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
           {/* Red Aura Engine */}
           <RedAuraEngine />
           
-          {/* Avatar Image — sole click target & laser ref */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            ref={(el) => { avatarRefs.current[index] = el }}
+          {/* Avatar Image */}
+          <Image
             src={avatar.src}
             alt={`Target ${avatar.id}`}
-            className={`relative h-full w-auto object-contain ${
-              interactionLocked ? "pointer-events-none" : "pointer-events-auto cursor-crosshair"
-            }`}
-            style={{ position: "relative", zIndex: 2 }}
-            onClick={() => handleAvatarClick(index)}
-            draggable={false}
+            width={400}
+            height={600}
+            className="relative h-full w-auto object-contain"
+            unoptimized
           />
         </div>
       ))}
