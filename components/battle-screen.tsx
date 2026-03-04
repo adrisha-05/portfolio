@@ -335,7 +335,6 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
   const [interactionLocked, setInteractionLocked] = useState(false)
 
   // Refs
-  const avatarRefs = useRef<(HTMLDivElement | null)[]>([])
   const containerRef = useRef<HTMLDivElement>(null)
   const laserAudioRef = useRef<HTMLAudioElement | null>(null)
 
@@ -358,24 +357,22 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
     }
   }, [])
 
-  const handleAvatarClick = useCallback((index: number) => {
+  const handleAvatarClick = useCallback((e: React.MouseEvent<HTMLImageElement>, index: number) => {
+    e.stopPropagation()
     if (interactionLocked) return
     setInteractionLocked(true)
 
-    const avatarEl = avatarRefs.current[index]
-    const container = containerRef.current
-    if (!avatarEl || !container) return
+    // Use the actual clicked <img> element — never rely on index-based lookup
+    const clickedAvatar = e.currentTarget
+    const rect = clickedAvatar.getBoundingClientRect()
 
-    const avatarRect = avatarEl.getBoundingClientRect()
-    const containerRect = container.getBoundingClientRect()
+    // Gun muzzle position (bottom center of viewport)
+    const gunX = window.innerWidth / 2
+    const gunY = window.innerHeight - 60
 
-    // Gun position (bottom center of screen)
-    const gunX = containerRect.width / 2
-    const gunY = containerRect.height - 60
-
-    // Target center (avatar center-mass)
-    const targetX = avatarRect.left - containerRect.left + avatarRect.width / 2
-    const targetY = avatarRect.top - containerRect.top + avatarRect.height * 0.4
+    // Target: center-x of the clicked image, chest-level (45% from top)
+    const targetX = rect.left + rect.width / 2
+    const targetY = rect.top + rect.height * 0.45
 
     // Play laser sound
     if (soundEnabled && laserAudioRef.current) {
@@ -552,11 +549,12 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
       </div>
 
       {/* ============= AVATAR TARGETS WITH AURA & ANCHORED LABELS ============= */}
+      {/* Outer containers are pointer-events-none; only the <img> is clickable */}
       {AVATAR_TARGETS.map((avatar, index) => (
         <div
-          ref={(el) => { avatarRefs.current[index] = el }}
           key={avatar.id}
-          className={`absolute inline-block ${interactionLocked ? "pointer-events-none" : "cursor-crosshair"}`}
+          className="pointer-events-none absolute inline-block"
+          data-target={AVATAR_LABELS[index].page}
           style={{
             left: avatar.left,
             bottom: avatar.bottom,
@@ -569,7 +567,6 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
               ? { animation: "dissolve-out 0.8s ease-out forwards" }
               : {}),
           }}
-          onClick={() => handleAvatarClick(index)}
         >
           {/* HUD label anchored above head */}
           <div
@@ -587,14 +584,17 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
           {/* Red Aura Engine */}
           <RedAuraEngine />
           
-          {/* Avatar Image */}
-          <Image
+          {/* Avatar Image — sole click target */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
             src={avatar.src}
             alt={`Target ${avatar.id}`}
-            width={400}
-            height={600}
-            className="relative h-full w-auto object-contain"
-            unoptimized
+            draggable={false}
+            className={`relative h-full w-auto object-contain ${
+              interactionLocked ? "pointer-events-none" : "pointer-events-auto cursor-crosshair"
+            }`}
+            style={{ position: "relative", zIndex: 2 }}
+            onClick={(e) => handleAvatarClick(e, index)}
           />
         </div>
       ))}
