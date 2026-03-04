@@ -318,6 +318,7 @@ interface BattleScreenProps {
 export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
   const [mounted, setMounted] = useState(false)
   const [gunVisible, setGunVisible] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
   const { enabled: soundEnabled } = useSound()
 
   // Laser state
@@ -343,7 +344,7 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
   // Preload laser sound
   useEffect(() => {
-    const audio = new Audio("/audio/ui-click.mp3")
+    const audio = new Audio("/sounds/laser-zap.mp3")
     audio.volume = 0.7
     audio.preload = "auto"
     laserAudioRef.current = audio
@@ -528,28 +529,141 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
         }}
       />
 
-      {/* ============= BACK BUTTON (Top-left) ============= */}
+      {/* ============= BACK BUTTON (Top-left, glowing) ============= */}
       {onBack && (
         <button
           onClick={onBack}
-          className={`group fixed left-5 top-5 z-[20] flex cursor-pointer items-center gap-2 font-mono text-[9px] uppercase tracking-[0.25em] text-white/40 transition-all duration-500 hover:text-white/70 sm:left-8 sm:top-7 ${
+          className={`group fixed left-5 top-5 z-[20] flex cursor-pointer items-center gap-2 font-mono text-[12px] uppercase tracking-[0.25em] transition-all duration-500 sm:left-8 sm:top-7 ${
             mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
           }`}
+          style={{
+            color: "rgba(0,207,255,0.7)",
+            textShadow: "0 0 8px rgba(0,200,255,0.4)",
+          }}
           aria-label="Back to mode select"
         >
-          <ArrowLeft className="h-3 w-3 transition-transform duration-300 group-hover:-translate-x-1" />
-          <span>Back</span>
+          <ArrowLeft
+            className="transition-transform duration-300 group-hover:-translate-x-1"
+            style={{ width: 16, height: 16, filter: "drop-shadow(0 0 4px rgba(0,200,255,0.5))" }}
+          />
+          <span className="group-hover:text-[rgba(0,207,255,1)] transition-colors duration-300">Back</span>
         </button>
       )}
 
-      {/* ============= SOUND TOGGLE (Top-right) ============= */}
+      {/* ============= TOP-RIGHT HUD: SOUND + HELP ============= */}
       <div
-        className={`fixed right-5 top-5 z-[20] sm:right-8 sm:top-7 transition-all duration-700 ${
+        className={`fixed right-5 top-5 z-[20] flex items-center gap-3 sm:right-8 sm:top-7 transition-all duration-700 ${
           mounted ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
         }`}
       >
         <SoundToggle position="inline" />
+        <button
+          onClick={() => setShowHelp(true)}
+          className="group relative flex cursor-pointer items-center gap-1.5 rounded border px-3 py-2 font-mono text-[10px] uppercase tracking-[0.2em] backdrop-blur-sm transition-all duration-500 border-[rgba(0,200,255,0.4)] bg-[rgba(5,15,25,0.6)] text-[#00CFFF] hover:border-[rgba(0,200,255,0.7)] hover:bg-[rgba(5,15,25,0.8)]"
+          style={{
+            boxShadow: "0 0 8px rgba(0,200,255,0.15), inset 0 0 6px rgba(0,200,255,0.08)",
+            textShadow: "0 0 4px rgba(0,200,255,0.5)",
+          }}
+          aria-label="Open help panel"
+        >
+          <span style={{ fontSize: "12px", fontWeight: 700 }}>?</span>
+          <span>Help</span>
+          <span className="absolute -left-px -top-px h-2 w-2 border-l border-t border-[rgba(0,200,255,0.5)]" />
+          <span className="absolute -right-px -top-px h-2 w-2 border-r border-t border-[rgba(0,200,255,0.5)]" />
+          <span className="absolute -bottom-px -left-px h-2 w-2 border-b border-l border-[rgba(0,200,255,0.5)]" />
+          <span className="absolute -bottom-px -right-px h-2 w-2 border-b border-r border-[rgba(0,200,255,0.5)]" />
+        </button>
       </div>
+
+      {/* ============= HELP MODAL ============= */}
+      {showHelp && (
+        <div
+          className="fixed inset-0 z-[30] flex items-center justify-center"
+          style={{ backgroundColor: "rgba(0,0,0,0.85)", backdropFilter: "blur(4px)" }}
+          onClick={() => setShowHelp(false)}
+        >
+          <div
+            className="relative mx-4 max-h-[80vh] w-full max-w-lg overflow-y-auto rounded-lg border font-mono"
+            style={{
+              borderColor: "rgba(0,200,255,0.4)",
+              background: "linear-gradient(180deg, rgba(5,12,25,0.97), rgba(3,8,18,0.97))",
+              boxShadow: "0 0 30px rgba(0,200,255,0.15), inset 0 0 20px rgba(0,200,255,0.05)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setShowHelp(false)}
+              className="absolute right-3 top-3 flex cursor-pointer items-center justify-center rounded transition-colors duration-300"
+              style={{
+                width: 28, height: 28,
+                color: "#00CFFF",
+                border: "1px solid rgba(0,200,255,0.3)",
+                background: "rgba(0,200,255,0.05)",
+              }}
+              aria-label="Close help panel"
+            >
+              <svg viewBox="0 0 16 16" fill="none" width="14" height="14"><path d="M4 4l8 8M12 4l-8 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+            </button>
+
+            <div className="p-6 sm:p-8">
+              {/* Title */}
+              <h2
+                className="mb-6 text-center text-sm uppercase tracking-[0.3em]"
+                style={{ color: "#00CFFF", textShadow: "0 0 8px rgba(0,200,255,0.4)" }}
+              >
+                Mission Briefing
+              </h2>
+
+              <div className="flex flex-col gap-5 text-[11px] leading-relaxed tracking-wide text-white/70">
+                {/* Mode Selection */}
+                <section>
+                  <h3 className="mb-1.5 text-xs uppercase tracking-[0.2em]" style={{ color: "#00CFFF" }}>
+                    Mode Selection
+                  </h3>
+                  <p>
+                    After choosing your role, you are presented with two modes.
+                    Click a mode card to enter either <strong className="text-white/90">Tactical View</strong> or <strong className="text-white/90">Combat Simulation (Battle Mode)</strong>.
+                  </p>
+                </section>
+
+                {/* Tactical View */}
+                <section>
+                  <h3 className="mb-1.5 text-xs uppercase tracking-[0.2em]" style={{ color: "#00CFFF" }}>
+                    Tactical View
+                  </h3>
+                  <p>
+                    A strategic HUD overview. Click on any module tile to open the corresponding page -- Profile, Strengths, Missions, Alliances, or Contact.
+                    Use the side arrows to navigate between pages.
+                  </p>
+                </section>
+
+                {/* Battle Mode */}
+                <section>
+                  <h3 className="mb-1.5 text-xs uppercase tracking-[0.2em]" style={{ color: "#00CFFF" }}>
+                    Battle Mode
+                  </h3>
+                  <p>
+                    An FPS-style combat arena. Five avatar targets stand on the battlefield, each labeled with a page name.
+                    Aim your crosshair and <strong className="text-white/90">click an avatar to shoot</strong>. The laser will fire, the avatar dissolves, and you are taken to that page.
+                  </p>
+                </section>
+
+                {/* Back Button */}
+                <section>
+                  <h3 className="mb-1.5 text-xs uppercase tracking-[0.2em]" style={{ color: "#00CFFF" }}>
+                    Navigation
+                  </h3>
+                  <p>
+                    Use the glowing <strong className="text-white/90">Back</strong> button in the top-left corner to return to the previous screen.
+                    From Battle Mode it returns to Mode Selection. From inner pages it returns to the view you came from.
+                  </p>
+                </section>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ============= AVATAR TARGETS WITH AURA & ANCHORED LABELS ============= */}
       {AVATAR_TARGETS.map((avatar, index) => (
