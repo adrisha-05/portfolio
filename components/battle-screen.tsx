@@ -362,20 +362,20 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
     if (interactionLocked) return
     setInteractionLocked(true)
 
-    const avatarEl = avatarRefs.current[index]
-    const container = containerRef.current
-    if (!avatarEl || !container) return
+    // Always recompute from the clicked avatar's image element
+    const avatarImgEl = avatarRefs.current[index]
+    if (!avatarImgEl) return
 
-    const avatarRect = avatarEl.getBoundingClientRect()
-    const containerRect = container.getBoundingClientRect()
+    // Get fresh bounding rect directly from the image element (not the scaled container)
+    const imgRect = avatarImgEl.getBoundingClientRect()
 
-    // Gun position (bottom center of screen)
-    const gunX = containerRect.width / 2
-    const gunY = containerRect.height - 60
+    // Gun position (bottom center of viewport)
+    const gunX = window.innerWidth / 2
+    const gunY = window.innerHeight - 60
 
-    // Target center (avatar center-mass)
-    const targetX = avatarRect.left - containerRect.left + avatarRect.width / 2
-    const targetY = avatarRect.top - containerRect.top + avatarRect.height * 0.4
+    // Target: center-x of the actual image, chest-level (45% from top) of the actual image
+    const targetX = imgRect.left + imgRect.width / 2
+    const targetY = imgRect.top + imgRect.height * 0.45
 
     // Play laser sound
     if (soundEnabled && laserAudioRef.current) {
@@ -555,7 +555,6 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
       {/* Pointer-events disabled on outer layer; only the image itself is clickable */}
       {AVATAR_TARGETS.map((avatar, index) => (
         <div
-          ref={(el) => { avatarRefs.current[index] = el }}
           key={avatar.id}
           className="pointer-events-none absolute inline-block"
           style={{
@@ -587,8 +586,9 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
           {/* Red Aura Engine */}
           <RedAuraEngine />
           
-          {/* Avatar Image — sole click target */}
+          {/* Avatar Image — sole click target & laser ref */}
           <Image
+            ref={(el) => { avatarRefs.current[index] = el as unknown as HTMLDivElement }}
             src={avatar.src}
             alt={`Target ${avatar.id}`}
             width={400}
