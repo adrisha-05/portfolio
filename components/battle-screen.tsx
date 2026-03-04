@@ -362,17 +362,13 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
     if (interactionLocked) return
     setInteractionLocked(true)
 
-    // Use the actual clicked <img> element — never rely on index-based lookup
-    const clickedAvatar = e.currentTarget
-    const rect = clickedAvatar.getBoundingClientRect()
+    // Use click coordinates directly — no getBoundingClientRect, no precomputed positions
+    const targetX = e.clientX
+    const targetY = e.clientY
 
     // Gun muzzle position (bottom center of viewport)
     const gunX = window.innerWidth / 2
     const gunY = window.innerHeight - 60
-
-    // Target: center-x of the clicked image, chest-level (45% from top)
-    const targetX = rect.left + rect.width / 2
-    const targetY = rect.top + rect.height * 0.45
 
     // Play laser sound
     if (soundEnabled && laserAudioRef.current) {
