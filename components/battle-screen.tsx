@@ -27,7 +27,7 @@ const AVATAR_LABELS = [
 
 // ===================== TONED DOWN RED AURA ENGINE (15% reduced) =====================
 function RedAuraEngine() {
-  const sparks = useMemo(() => 
+  const sparks = useMemo(() =>
     Array.from({ length: 14 }, (_, i) => ({
       id: i,
       left: 15 + Math.random() * 70,
@@ -39,7 +39,7 @@ function RedAuraEngine() {
 
   return (
     <div className="pointer-events-none absolute inset-0">
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: "radial-gradient(ellipse at center 70%, rgba(200,50,35,0.21) 0%, rgba(150,30,20,0.13) 40%, transparent 70%)",
@@ -47,14 +47,14 @@ function RedAuraEngine() {
           animation: "aura-flicker 3s ease-in-out infinite",
         }}
       />
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: "radial-gradient(ellipse at center 55%, rgba(255,80,50,0.17) 0%, rgba(220,60,40,0.085) 30%, transparent 55%)",
           filter: "blur(12px)",
         }}
       />
-      <div 
+      <div
         className="absolute inset-0"
         style={{
           background: "radial-gradient(ellipse at center 50%, rgba(255,100,60,0.13) 0%, transparent 40%)",
@@ -381,7 +381,7 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
     // Play laser sound
     if (soundEnabled && laserAudioRef.current) {
       laserAudioRef.current.currentTime = 0
-      laserAudioRef.current.play().catch(() => {})
+      laserAudioRef.current.play().catch(() => { })
     }
 
     // 1. Muzzle flash + gun recoil + screen shake
@@ -505,9 +505,8 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
       {/* ============= BATTLEFIELD BACKGROUND ============= */}
       <div
-        className={`fixed inset-0 z-0 transition-opacity duration-500 ease-out ${
-          mounted ? "opacity-100" : "opacity-0"
-        }`}
+        className={`fixed inset-0 z-0 transition-opacity duration-500 ease-out ${mounted ? "opacity-100" : "opacity-0"
+          }`}
       >
         <Image
           src="/images/battlefield.png"
@@ -533,9 +532,8 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
       {onBack && (
         <button
           onClick={onBack}
-          className={`group fixed left-5 top-5 z-[20] flex cursor-pointer items-center gap-2 font-mono text-[12px] uppercase tracking-[0.25em] transition-all duration-500 sm:left-8 sm:top-7 ${
-            mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
-          }`}
+          className={`group fixed left-5 top-5 z-[20] flex cursor-pointer items-center gap-2 font-mono text-[12px] uppercase tracking-[0.25em] transition-all duration-500 sm:left-8 sm:top-7 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
+            }`}
           style={{
             color: "rgba(0,207,255,0.7)",
             textShadow: "0 0 8px rgba(0,200,255,0.4)",
@@ -552,9 +550,8 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
       {/* ============= TOP-RIGHT HUD: SOUND + HELP ============= */}
       <div
-        className={`fixed right-5 top-5 z-[20] flex items-center gap-3 sm:right-8 sm:top-7 transition-all duration-700 ${
-          mounted ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
-        }`}
+        className={`fixed right-5 top-5 z-[20] flex items-center gap-3 sm:right-8 sm:top-7 transition-all duration-700 ${mounted ? "translate-x-0 opacity-100" : "translate-x-4 opacity-0"
+          }`}
       >
         <SoundToggle position="inline" />
         <HelpButton />
@@ -594,18 +591,20 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
           {/* Red Aura Engine */}
           <RedAuraEngine />
-          
+
           {/* Avatar Image — sole click target */}
           <Image
             src={avatar.src}
             alt={`Target ${avatar.id}`}
             width={400}
             height={600}
-            className={`relative h-full w-auto object-contain ${
-              interactionLocked ? "pointer-events-none" : "pointer-events-auto cursor-crosshair"
-            }`}
-            onClick={() => handleAvatarClick(index)}
+            className="relative h-full w-auto object-contain"
             unoptimized
+          />
+          <div
+            className={`absolute left-1/2 top-[10%] h-[80%] w-[50%] -translate-x-1/2 ${interactionLocked ? "pointer-events-none cursor-default" : "pointer-events-auto cursor-crosshair"
+              }`}
+            onClick={() => handleAvatarClick(index)}
           />
         </div>
       ))}
@@ -722,9 +721,8 @@ export function BattleScreen({ onBack, onNavigate }: BattleScreenProps) {
 
       {/* ============= GUN OVERLAY WITH ENERGY CROSS ============= */}
       <div
-        className={`pointer-events-none fixed bottom-0 z-[10] transition-opacity duration-500 ease-out ${
-          gunVisible ? "opacity-100" : "opacity-0"
-        }`}
+        className={`pointer-events-none fixed bottom-0 z-[10] transition-opacity duration-500 ease-out ${gunVisible ? "opacity-100" : "opacity-0"
+          }`}
         style={{
           left: "50%",
           width: "clamp(300px, 40vw, 600px)",
