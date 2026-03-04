@@ -93,7 +93,7 @@ function RedAuraEngine() {
   )
 }
 
-// ===================== HUD LABEL BOX WITH BLUE SPARKS =====================
+// ===================== HUD LABEL TAG (Angular Sci-Fi) =====================
 function HudLabelBox({ label }: { label: string }) {
   const sparks = useMemo(
     () =>
@@ -108,7 +108,7 @@ function HudLabelBox({ label }: { label: string }) {
   )
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block" style={{ maxWidth: "90vw" }}>
       {/* Blue energy sparks */}
       {sparks.map((spark) => (
         <div
@@ -127,18 +127,48 @@ function HudLabelBox({ label }: { label: string }) {
           }}
         />
       ))}
-      {/* HUD frame */}
+      {/* Angular HUD frame */}
       <div
+        className="relative"
         style={{
           display: "inline-block",
-          padding: "6px 14px",
-          borderRadius: "6px",
-          border: "1px solid rgba(0, 200, 255, 0.6)",
-          background: "rgba(0, 30, 50, 0.25)",
-          backdropFilter: "blur(2px)",
-          boxShadow: "0 0 8px rgba(0, 200, 255, 0.6), 0 0 18px rgba(0, 200, 255, 0.3)",
+          padding: "6px 16px",
+          border: "1px solid rgba(0,200,255,0.9)",
+          background: "linear-gradient(180deg, rgba(10,20,35,0.85), rgba(0,10,20,0.75))",
+          backgroundImage:
+            "repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 3px)",
+          clipPath:
+            "polygon(0% 25%, 8% 0%, 92% 0%, 100% 25%, 100% 75%, 92% 100%, 8% 100%, 0% 75%)",
+          boxShadow:
+            "0 0 6px rgba(0,200,255,0.6), 0 0 14px rgba(0,200,255,0.4), inset 0 0 6px rgba(0,200,255,0.35)",
         }}
       >
+        {/* Top-left corner accent */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            top: 2,
+            left: 6,
+            width: 4,
+            height: 4,
+            background: "#00CFFF",
+            opacity: 0.7,
+            boxShadow: "0 0 4px rgba(0,207,255,0.8)",
+          }}
+        />
+        {/* Bottom-right corner accent */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            bottom: 2,
+            right: 6,
+            width: 4,
+            height: 4,
+            background: "#00CFFF",
+            opacity: 0.7,
+            boxShadow: "0 0 4px rgba(0,207,255,0.8)",
+          }}
+        />
         <span
           className="uppercase"
           style={{
@@ -157,6 +187,21 @@ function HudLabelBox({ label }: { label: string }) {
     </div>
   )
 }
+
+// ===================== LABEL COLLISION OFFSETS =====================
+// Pre-computed vertical offsets to prevent overlapping labels.
+// Avatars at left:10%, 28%, 50%, 72%, 90% — only nearby pairs can collide.
+const LABEL_VERTICAL_OFFSETS = [0, 12, 0, 10, 0]
+
+// Edge-clamping transforms: shift labels inward when near screen edges
+// Avatar 1 (10%) shifts right, Avatar 5 (90%) shifts left
+const LABEL_EDGE_TRANSFORMS = [
+  "translateX(-30%)",   // avatar 1 at 10% — shift right
+  "translateX(-50%)",   // avatar 2 at 28% — centered
+  "translateX(-50%)",   // avatar 3 at 50% — centered
+  "translateX(-50%)",   // avatar 4 at 72% — centered
+  "translateX(-70%)",   // avatar 5 at 90% — shift left
+]
 
 // ===================== MAIN COMPONENT =====================
 export function BattleScreen() {
@@ -250,8 +295,8 @@ export function BattleScreen() {
             style={{
               bottom: "100%",
               left: "50%",
-              transform: "translateX(-50%)",
-              marginBottom: "6px",
+              transform: LABEL_EDGE_TRANSFORMS[index],
+              marginBottom: `${6 + LABEL_VERTICAL_OFFSETS[index]}px`,
             }}
           >
             <HudLabelBox label={AVATAR_LABELS[index].label} />
